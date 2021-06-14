@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform:
+- AWS::Serverless-2016-10-31
+Description: Lmbda CloudFormation Lab
+Resources:
+  GetUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getUser
+      Handler: user.getUser
+      Runtime: python3.6
+      CodeUri: s3://cloudfront-2/e639e8e8f715447e5f0008f092d988ff
+  PutUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: putUser
+      Handler: lambda.putUser
+      Runtime: python3.6
+      CodeUri: s3://cloudfront-2/e639e8e8f715447e5f0008f092d988ff
