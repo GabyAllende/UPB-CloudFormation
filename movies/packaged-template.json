@@ -9,7 +9,7 @@ Resources:
       FunctionName: getMovie
       Handler: movie.getMovie
       Runtime: python3.6
-      CodeUri: s3://cloudfront-2/2dd130a0deeac6b9a12c7ccf580fe9ce
+      CodeUri: s3://cloudfront-2/060b2241fb2096c663507ae4734b788c
       Policies:
       - DynamoDBReadPolicy:
           TableName:
@@ -32,7 +32,7 @@ Resources:
       FunctionName: putMovie
       Handler: movie.putMovie
       Runtime: python3.6
-      CodeUri: s3://cloudfront-2/2dd130a0deeac6b9a12c7ccf580fe9ce
+      CodeUri: s3://cloudfront-2/060b2241fb2096c663507ae4734b788c
       Policies:
       - DynamoDBWritePolicy:
           TableName:
@@ -55,7 +55,7 @@ Resources:
       FunctionName: roomsPerDay
       Handler: movie.roomsPerDay
       Runtime: python3.6
-      CodeUri: s3://cloudfront-2/2dd130a0deeac6b9a12c7ccf580fe9ce
+      CodeUri: s3://cloudfront-2/060b2241fb2096c663507ae4734b788c
       Policies:
       - DynamoDBReadPolicy:
           TableName:
@@ -78,7 +78,7 @@ Resources:
       FunctionName: getAvailableRooms
       Handler: movie.getAvailableRooms
       Runtime: python3.6
-      CodeUri: s3://cloudfront-2/2dd130a0deeac6b9a12c7ccf580fe9ce
+      CodeUri: s3://cloudfront-2/060b2241fb2096c663507ae4734b788c
       Policies:
       - DynamoDBWritePolicy:
           TableName:
@@ -95,13 +95,13 @@ Resources:
               Ref: MyAPI
             Path: /rooms/movies/{movie_id}
             Method: GET
-  GetAvailableRooms2:
+  GetAvailableSeats3D:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: getAvailableRooms2
-      Handler: movie.getAvailableRooms2
+      FunctionName: getAvailableSeats3D
+      Handler: movie.getAvailableSeats3D
       Runtime: python3.6
-      CodeUri: s3://cloudfront-2/2dd130a0deeac6b9a12c7ccf580fe9ce
+      CodeUri: s3://cloudfront-2/060b2241fb2096c663507ae4734b788c
       Policies:
       - DynamoDBWritePolicy:
           TableName:
@@ -116,7 +116,7 @@ Resources:
           Properties:
             RestApiId:
               Ref: MyAPI
-            Path: /rooms/movies2/{movie_id}
+            Path: /rooms/{room_id}
             Method: GET
   GetAudience:
     Type: AWS::Serverless::Function
@@ -124,7 +124,7 @@ Resources:
       FunctionName: getAudience
       Handler: movie.getAudience
       Runtime: python3.6
-      CodeUri: s3://cloudfront-2/2dd130a0deeac6b9a12c7ccf580fe9ce
+      CodeUri: s3://cloudfront-2/060b2241fb2096c663507ae4734b788c
       Policies:
       - DynamoDBWritePolicy:
           TableName:
@@ -141,6 +141,29 @@ Resources:
               Ref: MyAPI
             Path: /rooms/{room_id}/movies/{movie_id}
             Method: GET
+  GetPersonMovies:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getPersonMovies
+      Handler: movie.getPersonMovies
+      Runtime: python3.6
+      CodeUri: s3://cloudfront-2/060b2241fb2096c663507ae4734b788c
+      Policies:
+      - DynamoDBWritePolicy:
+          TableName:
+            Ref: MoviesTable
+      Environment:
+        Variables:
+          MOVIES_TABLE:
+            Ref: MoviesTable
+      Events:
+        GetMovies:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: MyAPI
+            Path: /people/{person_id}
+            Method: GET
   MyAPI:
     Type: AWS::Serverless::Api
     Properties:
@@ -150,7 +173,7 @@ Resources:
         Fn::Transform:
           Name: AWS::Include
           Parameters:
-            Location: s3://cloudfront-2/2b17775061e1da93a3b0be462e1622f6
+            Location: s3://cloudfront-2/1ab07503b4160b514baeffe6664082ea
   MoviesTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -168,3 +191,26 @@ Resources:
         AttributeType: S
       - AttributeName: sk
         AttributeType: S
+  PutPeople:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: putPeople
+      Handler: movie.putPeople
+      Runtime: python3.6
+      CodeUri: s3://cloudfront-2/060b2241fb2096c663507ae4734b788c
+      Policies:
+      - DynamoDBWritePolicy:
+          TableName:
+            Ref: MoviesTable
+      Environment:
+        Variables:
+          MOVIES_TABLE:
+            Ref: MoviesTable
+      Events:
+        GetMovies:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: MyAPI
+            Path: /people/rooms/{room_id}
+            Method: PUT
