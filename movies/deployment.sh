@@ -1,7 +1,7 @@
 
 #!/bin/bash
 DEPLOYMENT_BUCKET="cloudfront-2"
-
+STACK_NAME="upb-cf-1"
 
 while getopts ":bdp" OPTION; do
     case $OPTION in
