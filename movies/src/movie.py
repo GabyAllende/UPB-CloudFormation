@@ -2,6 +2,8 @@
 import json
 import boto3
 import os
+from boto3.dynamodb.conditions import Key, Attr
+
 
 movies_table = os.environ['MOVIES_TABLE']
 
@@ -44,7 +46,7 @@ def putMovie(event, context):
     print(body_object['title'])
     print(body_object['year'])
     
-    table.put_item(
+    res = table.put_item(
         Item={
             'pk': movie_id,
             'sk': 'mov_info',
@@ -52,19 +54,10 @@ def putMovie(event, context):
             'title': body_object['title'],
             'year': body_object['year']
         })
-    # Item={
-    #         'pk': movie_id,
-    #         'sk': 'mov_info',
-    #         'main_actors': 'Keira Knightley',
-    #         'title': 'Orgullo y Prejuicio',
-    #         'year': '2012'
-    #     }
-    table.put_item(Item)
-    
-    #item = item['Item']
+     
     return {
         'statusCode': 200,
-        'body': json.dumps("All good")
+        'body': json.dumps("Agregado correctamente")
     }
 
 def roomsPerDay(event, context):
@@ -88,4 +81,93 @@ def roomsPerDay(event, context):
         'body': json.dumps("success")
     }
     
+def getAvailableRooms(event, context):
+    print(json.dumps({"running": True}))
+    print(json.dumps(event))
+    
+    path = event["path"] # "/user/123"
+    array_path = path.split("/") # ["", "user", "123"]
+    movie_id = array_path[-1]
+    print("Llega hasta aca")
+    
+    table2 = table.scan(FilterExpression=Attr('pk').eq(movie_id) & Attr('sk').begins_with("room_"))
+    data = table2['Items']
+    print("data")
+    # response = table.get_item(
+    #     Key={
+    #         'pk': user_id,
+    #         'sk': 'age'
+    #     }
+    # )
+    # item = response['Item']
+    # print(item)
+    return {
+        'statusCode': 200,
+        'body': json.dumps(data)
+    }
+    
+def getAudience(event, context):
+    print(json.dumps({"running": True}))
+    print(json.dumps(event))
+    
+    path = event["path"] # "/user/123"
+    array_path = path.split("/") # ["", "user", "123"]/ "/rooms/{room_id}/movies/{movie_id}"
+    movie_id = array_path[-1]
+    room_id = array_path[-3]
+    print("Llega hasta aca")
+    
+    q1 = table.scan(FilterExpression=Attr('pk').eq(movie_id) & Attr('sk').eq(room_id))
+    q2 = table.scan(FilterExpression=Attr('pk').eq(room_id) & Attr('sk').begins_with("person_"))
+    data1 = q1['Items']
+    data2 = q2['Items']
+    
+    temp = []
+    
+    for x in data1:
+        for y in data2:
+            if x['schedule'] == y['schedule']:
+                temp.append(y)
+    
+    
+    print(temp)
+    
+    
+    # response = table.get_item(
+    #     Key={
+    #         'pk': user_id,
+    #         'sk': 'age'
+    #     }
+    # )
+    # item = response['Item']
+    # print(item)
+    return {
+        'statusCode': 200,
+        'body': json.dumps(data1)
+    }
+    
+    
+def getAvailableRooms2(event, context):
+    print(json.dumps({"running": True}))
+    print(json.dumps(event))
+    
+    path = event["path"] # "/user/123"
+    array_path = path.split("/") # ["", "user", "123"]
+    movie_id = array_path[-1]
+    print("Llega hasta aca")
+    
+    table2 = table.scan(FilterExpression=Attr('pk').eq(movie_id) & Attr('sk').begins_with("room_"))
+    data = table2['Items']
+    print("data")
+    # response = table.get_item(
+    #     Key={
+    #         'pk': user_id,
+    #         'sk': 'age'
+    #     }
+    # )
+    # item = response['Item']
+    # print(item)
+    return {
+        'statusCode': 200,
+        'body': json.dumps(data)
+    }
     

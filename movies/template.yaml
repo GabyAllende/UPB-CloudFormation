@@ -68,6 +68,67 @@ Resources:
             Path: "/roomsPerDay/movie/{movie_id}"
             Method: GET
   
+  GetAvailableRooms:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getAvailableRooms
+      Handler: movie.getAvailableRooms
+      Runtime: python3.6
+      CodeUri: package/
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref MoviesTable
+      Environment:
+        Variables:
+          MOVIES_TABLE: !Ref MoviesTable
+      Events:
+        GetMovies:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyAPI
+            Path: "/rooms/movies/{movie_id}"
+            Method: GET
+  GetAvailableRooms2:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getAvailableRooms2
+      Handler: movie.getAvailableRooms2
+      Runtime: python3.6
+      CodeUri: package/
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref MoviesTable
+      Environment:
+        Variables:
+          MOVIES_TABLE: !Ref MoviesTable
+      Events:
+        GetMovies:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyAPI
+            Path: "/rooms/movies2/{movie_id}"
+            Method: GET
+  GetAudience:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getAudience
+      Handler: movie.getAudience
+      Runtime: python3.6
+      CodeUri: package/
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref MoviesTable
+      Environment:
+        Variables:
+          MOVIES_TABLE: !Ref MoviesTable
+      Events:
+        GetMovies:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyAPI
+            Path: "/rooms/{room_id}/movies/{movie_id}"
+            Method: GET
+  
   MyAPI:
     Type: AWS::Serverless::Api
     Properties:

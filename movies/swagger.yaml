@@ -59,3 +59,45 @@ paths:
         uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:roomsPerDay/invocations"
         httpMethod: "POST"
+        
+  /rooms/movies/{movie_id}:
+    get:
+      summary: Returns available rooms
+      parameters:
+        - name: movie_id
+          in: path
+          required: true
+          description: movie unique id
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:getAvailableRooms/invocations"
+        httpMethod: "POST"
+
+  /rooms/movies2/{movie_id}:
+    get:
+      summary: Returns available rooms
+      parameters:
+        - name: movie_id
+          in: path
+          required: true
+          description: movie unique id
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:getAvailableRooms2/invocations"
+        httpMethod: "POST"
+
+  /rooms/{room_id}/movies/{movie_id}:
+    get:
+      summary: Returns audience
+      parameters:
+        - name: movie_id
+          in: path
+          required: true
+          description: movie unique id
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:getAudience/invocations"
+        httpMethod: "POST"
